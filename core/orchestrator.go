@@ -3,18 +3,32 @@ package core
 import (
 	"fmt"
 	"log"
+	"runtime"
 	"sync"
 )
 
+type Task func()
+
 type Orchestrator struct {
 	sync.RWMutex
+
+	workers int
+	tasks   chan Task
+	wg      sync.WaitGroup
 
 	dataBus *DataBus
 	agents  map[string]Agent
 }
 
-func NewOrchestrator() *Orchestrator {
+func NewOrchestrator(workers int) *Orchestrator {
+	if workers <= 0 {
+		workers = runtime.NumCPU() * 2
+	}
+
 	return &Orchestrator{
+		workers: workers,
+		tasks:   make(chan Task),
+		wg:      sync.WaitGroup{},
 		dataBus: NewDataBus(),
 		agents:  make(map[string]Agent),
 	}
@@ -37,8 +51,37 @@ func (o *Orchestrator) Register(agent Agent) error {
 	return nil
 }
 
+func (o *Orchestrator) worker(id int) {
+	// log.Printf("started worker #%d", id)
+
+	for task := range o.tasks {
+		if task == nil {
+			log.Printf("stopping worker %d", id)
+			return
+		}
+
+		// log.Printf("running task %v", task)
+		task()
+
+		o.wg.Done()
+	}
+}
+
+func (o *Orchestrator) Start() {
+	log.Printf("starting %d workers...", o.workers)
+
+	for i := 0; i < o.workers; i++ {
+		go o.worker(i)
+	}
+}
+
+func (o *Orchestrator) RunTask(t Task) {
+	o.wg.Add(1)
+	o.tasks <- t
+}
+
 func (o *Orchestrator) Publish(eventName string, args ...interface{}) {
-	log.Printf("publish: %s(%v)", eventName, args)
+	log.Printf("publish: \033[1m%s(%v)\033[0m", eventName, args)
 	o.dataBus.Publish(eventName, args...)
 }
 
@@ -48,4 +91,5 @@ func (o *Orchestrator) Subscribe(eventName string, fn interface{}) {
 
 func (o *Orchestrator) Wait() {
 	o.dataBus.WaitAsync()
+	o.wg.Wait()
 }

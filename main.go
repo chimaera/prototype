@@ -12,10 +12,12 @@ var (
 )
 
 func main() {
-	olympus = core.NewOrchestrator()
+	olympus = core.NewOrchestrator(32)
 
 	olympus.Register(agents.NewDNSEnum())
 	olympus.Register(agents.NewIPChecker())
+
+	olympus.Start()
 
 	olympus.Publish("new:hostname", "www.google.com")
 

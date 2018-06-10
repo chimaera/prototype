@@ -1,7 +1,7 @@
 package agents
 
 import (
-	"log"
+	// "log"
 	"net"
 
 	"github.com/chimaera/prototype/core"
@@ -28,7 +28,7 @@ func (c *IPChecker) Register(o *core.Orchestrator) error {
 
 	c.orchestrator = o
 
-	log.Printf("subscribed %s to `new:hostname` and `new:subdomain` events", c.ID())
+	// log.Printf("subscribed %s to `new:hostname` and `new:subdomain` events", c.ID())
 
 	return nil
 }
@@ -40,14 +40,13 @@ func (c *IPChecker) onEndpoint(hostname string) {
 
 	c.state.Add(hostname)
 
-	log.Printf("got new endpoint to scan for ip addresses: %s", hostname)
+	// log.Printf("got new endpoint to scan for ip addresses: %s", hostname)
 
-	// TODO: limit this by using the main orchestrator job queue
-	if addrs, err := net.LookupHost(hostname); err == nil {
-		for _, addr := range addrs {
-			c.orchestrator.Publish("new:ip", addr)
+	c.orchestrator.RunTask(func() {
+		if addrs, err := net.LookupHost(hostname); err == nil {
+			for _, addr := range addrs {
+				c.orchestrator.Publish("new:ip", addr)
+			}
 		}
-	} else {
-		// log.Printf("%v", err)
-	}
+	})
 }

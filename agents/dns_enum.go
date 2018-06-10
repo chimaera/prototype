@@ -2,8 +2,8 @@ package agents
 
 import (
 	"fmt"
-	"log"
-	"time"
+	// "log"
+	"net"
 
 	"github.com/chimaera/prototype/core"
 
@@ -31,7 +31,7 @@ func (d *DNSEnum) Register(o *core.Orchestrator) error {
 	// we'll need it to publish results and run tasks
 	d.orchestrator = o
 
-	log.Printf("subscribed %s to `new:hostname` event", d.ID())
+	// log.Printf("subscribed %s to `new:hostname` event", d.ID())
 
 	return nil
 }
@@ -44,12 +44,26 @@ func (d *DNSEnum) onNewHostname(hostname string) {
 
 	d.state.Add(domainName)
 
-	log.Printf("got new domain to scan for subdomains: %s", domainName)
+	// log.Printf("got new domain to scan for subdomains: %s", domainName)
 
-	// TODO stuff, just emitting values to show the idea
-	d.orchestrator.Publish("new:subdomain", fmt.Sprintf("www.%s", domainName))
-	time.Sleep(1 * time.Second)
-	d.orchestrator.Publish("new:subdomain", fmt.Sprintf("app.%s", domainName))
-	time.Sleep(1 * time.Second)
-	d.orchestrator.Publish("new:subdomain", fmt.Sprintf("beta.%s", domainName))
+	// TODO: load this from a file :P
+	wordlist := []string{
+		"www",
+		"www2",
+		"dev",
+		"app",
+		"beta",
+	}
+
+	for _, word := range wordlist {
+		// we need this to capture `word`
+		func(sub string) {
+			d.orchestrator.RunTask(func() {
+				hostname := fmt.Sprintf("%s.%s", sub, domainName)
+				if _, err := net.LookupHost(hostname); err == nil {
+					d.orchestrator.Publish("new:subdomain", hostname)
+				}
+			})
+		}(word)
+	}
 }
