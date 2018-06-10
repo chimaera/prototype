@@ -1,7 +1,23 @@
 package main
 
-import "fmt"
+import (
+	// "log"
+
+	"github.com/chimaera/prototype/agents"
+	"github.com/chimaera/prototype/core"
+)
+
+var (
+	olympus = (*core.Orchestrator)(nil)
+)
 
 func main() {
-	fmt.Println("vim-go")
+	olympus = core.NewOrchestrator()
+
+	olympus.Register(agents.NewDNSEnum())
+	olympus.Register(agents.NewIPChecker())
+
+	olympus.Publish("new:hostname", "www.google.com")
+
+	olympus.Wait()
 }
