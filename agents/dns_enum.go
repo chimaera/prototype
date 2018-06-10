@@ -27,7 +27,7 @@ func (d *DNSEnum) ID() string {
 
 func (d *DNSEnum) Register(o *core.Orchestrator) error {
 	// what is this agent interested into?
-	o.Subscribe("new:hostname", d.onNewHostname)
+	o.Subscribe(core.NewHostname, d.onNewHostname)
 	// we'll need it to publish results and run tasks
 	d.orchestrator = o
 
@@ -61,7 +61,7 @@ func (d *DNSEnum) onNewHostname(hostname string) {
 			d.orchestrator.RunTask(func() {
 				hostname := fmt.Sprintf("%s.%s", sub, domainName)
 				if _, err := net.LookupHost(hostname); err == nil {
-					d.orchestrator.Publish("new:subdomain", hostname)
+					d.orchestrator.Publish(core.NewSubdomain, hostname)
 				}
 			})
 		}(word)

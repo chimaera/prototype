@@ -23,8 +23,8 @@ func (c *IPChecker) ID() string {
 }
 
 func (c *IPChecker) Register(o *core.Orchestrator) error {
-	o.Subscribe("new:hostname", c.onEndpoint)
-	o.Subscribe("new:subdomain", c.onEndpoint)
+	o.Subscribe(core.NewHostname, c.onEndpoint)
+	o.Subscribe(core.NewSubdomain, c.onEndpoint)
 
 	c.orchestrator = o
 
@@ -45,7 +45,7 @@ func (c *IPChecker) onEndpoint(hostname string) {
 	c.orchestrator.RunTask(func() {
 		if addrs, err := net.LookupHost(hostname); err == nil {
 			for _, addr := range addrs {
-				c.orchestrator.Publish("new:ip", addr)
+				c.orchestrator.Publish(core.NewIP, addr)
 			}
 		}
 	})
