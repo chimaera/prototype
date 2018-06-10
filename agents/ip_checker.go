@@ -2,7 +2,9 @@ package agents
 
 import (
 	// "log"
+	"fmt"
 	"net"
+	"strings"
 
 	"github.com/chimaera/prototype/core"
 )
@@ -45,6 +47,9 @@ func (c *IPChecker) onEndpoint(hostname string) {
 	c.orchestrator.RunTask(func() {
 		if addrs, err := net.LookupHost(hostname); err == nil {
 			for _, addr := range addrs {
+				if strings.Contains(addr, ":") {
+					addr = fmt.Sprintf("[%s]", addr)
+				}
 				c.orchestrator.Publish(core.NewIP, addr)
 			}
 		}
