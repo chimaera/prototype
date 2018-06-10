@@ -36,11 +36,11 @@ func (c *IPChecker) Register(o *core.Orchestrator) error {
 }
 
 func (c *IPChecker) onEndpoint(hostname string) {
-	if c.state.DidProcess(hostname) {
+	if c.state.DidProcess(hostname, c.ID()) {
 		return
 	}
 
-	c.state.Add(hostname)
+	c.state.Add(hostname, c.ID())
 
 	// log.Printf("got new endpoint to scan for ip addresses: %s", hostname)
 

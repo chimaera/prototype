@@ -25,7 +25,7 @@ func NewTCPPortscanner() *TCPPortscanner {
 }
 
 func (c *TCPPortscanner) ID() string {
-  return "ip:portscanner"
+  return "portscanner:tcp"
 }
 
 func (c *TCPPortscanner) Register(o *core.Orchestrator) error {
@@ -39,11 +39,11 @@ func (c *TCPPortscanner) Register(o *core.Orchestrator) error {
 }
 
 func (c *TCPPortscanner) onEndpoint(ip string) {
-  if c.state.DidProcess(ip) {
+  if c.state.DidProcess(ip, c.ID()) {
     return
   }
 
-  c.state.Add(ip)
+  c.state.Add(ip, c.ID())
 
   // log.Printf("got new IP to scan for ports: %s", ip)
 

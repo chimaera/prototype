@@ -1,6 +1,9 @@
 package core
 
 import (
+	"crypto/sha1"
+	"fmt"
+	"io"
 	"sync"
 )
 
@@ -15,15 +18,22 @@ func NewState() *State {
 	}
 }
 
-func (s *State) Add(data string) {
-	s.Lock()
-	defer s.Unlock()
-	s.processed[data] = true
+func (s *State) makeTaskId(data string, agentId string) string {
+	h := sha1.New()
+	io.WriteString(h, data)
+	io.WriteString(h, agentId)
+	return fmt.Sprintf("% x", h.Sum(nil))
 }
 
-func (s *State) DidProcess(data string) (found bool) {
+func (s *State) Add(data string, agentId string) {
+	s.Lock()
+	defer s.Unlock()
+	s.processed[s.makeTaskId(data, agentId)] = true
+}
+
+func (s *State) DidProcess(data string, agentId string) (found bool) {
 	s.RLock()
 	defer s.RUnlock()
-	_, found = s.processed[data]
+	_, found = s.processed[s.makeTaskId(data, agentId)]
 	return
 }

@@ -2,7 +2,7 @@ package agents
 
 import (
   "fmt"
-  "log"
+  // "log"
   "net"
   "time"
 
@@ -25,7 +25,7 @@ func NewUDPPortscanner() *UDPPortscanner {
 }
 
 func (c *UDPPortscanner) ID() string {
-  return "ip:portscanner"
+  return "portscanner:udp"
 }
 
 func (c *UDPPortscanner) Register(o *core.Orchestrator) error {
@@ -38,15 +38,15 @@ func (c *UDPPortscanner) Register(o *core.Orchestrator) error {
   return nil
 }
 
-// TODO: Make this an actually functional UDP scanner...
+// TODO: Make this an actual functional UDP scanner...
 func (c *UDPPortscanner) onEndpoint(ip string) {
-  if c.state.DidProcess(ip) {
+  if c.state.DidProcess(ip, c.ID()) {
     return
   }
 
-  c.state.Add(ip)
+  c.state.Add(ip, c.ID())
 
-  log.Printf("got new IP to scan for UDP ports: %s", ip)
+  // log.Printf("got new IP to scan for UDP ports: %s", ip)
 
   c.orchestrator.RunTask(func() {
     for _, port := range UDPPorts {
@@ -54,7 +54,7 @@ func (c *UDPPortscanner) onEndpoint(ip string) {
       conn, _ := net.DialTimeout("udp", host, 1000*time.Millisecond)
       if conn != nil {
         conn.Close()
-        c.orchestrator.Publish(core.NewPortTCP, port, ip)
+        c.orchestrator.Publish(core.NewPortUDP, port, ip)
       }
     }
   })

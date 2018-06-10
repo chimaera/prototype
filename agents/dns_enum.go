@@ -38,11 +38,11 @@ func (d *DNSEnum) Register(o *core.Orchestrator) error {
 
 func (d *DNSEnum) onNewHostname(hostname string) {
 	domainName := domainutil.Domain(hostname)
-	if d.state.DidProcess(domainName) {
+	if d.state.DidProcess(domainName, d.ID()) {
 		return
 	}
 
-	d.state.Add(domainName)
+	d.state.Add(domainName, d.ID())
 
 	// log.Printf("got new domain to scan for subdomains: %s", domainName)
 
