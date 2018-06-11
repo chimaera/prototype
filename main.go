@@ -16,6 +16,7 @@ func main() {
 
 	olympus.Register(agents.NewDNSEnum())
 	olympus.Register(agents.NewIPChecker())
+	olympus.Register(agents.NewWhoisChecker())
 	olympus.Register(agents.NewTCPPortscanner())
 	olympus.Register(agents.NewUDPPortscanner())
 
