@@ -44,8 +44,6 @@ func (d *DNSEnum) onNewHostname(hostname string) {
 
 	d.state.Add(domainName, d.ID())
 
-	// log.Printf("got new domain to scan for subdomains: %s", domainName)
-
 	// TODO: load this from a file :P
 	wordlist := []string{
 		"www",

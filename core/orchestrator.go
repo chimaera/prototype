@@ -5,6 +5,8 @@ import (
 	"log"
 	"runtime"
 	"sync"
+
+	"github.com/chimaera/prototype/db"
 )
 
 type Task func()
@@ -19,6 +21,7 @@ type Orchestrator struct {
 	dataBus *DataBus
 	state   *State
 	agents  map[string]Agent
+	dbase   *db.Database
 }
 
 func NewOrchestrator(workers int) *Orchestrator {
@@ -69,17 +72,24 @@ func (o *Orchestrator) worker(id int) {
 	}
 }
 
-func (o *Orchestrator) Start() {
-	log.Printf("starting %d workers...", o.workers)
+func (o *Orchestrator) Start(rootEvent string, rootType db.NodeType, rootValue interface{}) {
+	o.dbase = db.New(db.NewNode(rootType, rootValue))
 
+	log.Printf("starting %d workers...", o.workers)
 	for i := 0; i < o.workers; i++ {
 		go o.worker(i)
 	}
+
+	o.Publish(rootEvent, rootValue)
 }
 
 func (o *Orchestrator) RunTask(t Task) {
 	o.wg.Add(1)
 	o.tasks <- t
+}
+
+func (o *Orchestrator) doPrint(f string, args ...interface{}) {
+	fmt.Printf(f, args...)
 }
 
 func (o *Orchestrator) Publish(eventName string, args ...interface{}) {
@@ -92,6 +102,9 @@ func (o *Orchestrator) Publish(eventName string, args ...interface{}) {
 	o.state.Add(key, "main:state")
 
 	log.Printf("publish: \033[1m%s\033[0m", key)
+
+	// print("\033[H\033[2J")
+	// o.dbase.Root().Print(o.doPrint, 0)
 
 	o.dataBus.Publish(eventName, args...)
 }

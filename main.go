@@ -1,10 +1,11 @@
 package main
 
 import (
-	// "log"
+	//"log"
 
 	"github.com/chimaera/prototype/agents"
 	"github.com/chimaera/prototype/core"
+	"github.com/chimaera/prototype/db"
 )
 
 var (
@@ -22,9 +23,13 @@ func main() {
 	olympus.Register(agents.NewConfigChecker())
 	agents.RegisterPassiveDNSAgents(olympus)
 
-	olympus.Start()
+	inEvent := "new:hostname"
+	inType := db.NodeTypeHostname
+	inValue := "www.freelancer.com"
 
-	olympus.Publish("new:hostname", "www.freelancer.com")
+	olympus.Start(inEvent, inType, inValue)
+
+	// dbase.Root().Print(log.Printf, 0)
 
 	olympus.Wait()
 }
