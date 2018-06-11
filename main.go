@@ -19,9 +19,11 @@ func main() {
 	olympus.Register(agents.NewTCPPortscanner())
 	olympus.Register(agents.NewUDPPortscanner())
 
+	agents.RegisterPassiveAgents(olympus)
+
 	olympus.Start()
 
-	olympus.Publish("new:hostname", "www.google.com")
+	olympus.Publish("new:hostname", "www.freelancer.com")
 
 	olympus.Wait()
 }
