@@ -26,9 +26,5 @@ func main() {
 
 	olympus.Publish("new:hostname", "www.freelancer.com")
 
-	// TODO: Publish Such webhost event for each subdomain found
-	// TODO: Also, implement custom HOST header addition
-	olympus.Publish("new:webhost", "http://www.madridghosttour.com/")
-
 	olympus.Wait()
 }

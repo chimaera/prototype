@@ -17,6 +17,7 @@ type Orchestrator struct {
 	wg      sync.WaitGroup
 
 	dataBus *DataBus
+	state   *State
 	agents  map[string]Agent
 }
 
@@ -30,6 +31,7 @@ func NewOrchestrator(workers int) *Orchestrator {
 		tasks:   make(chan Task),
 		wg:      sync.WaitGroup{},
 		dataBus: NewDataBus(),
+		state:   NewState(),
 		agents:  make(map[string]Agent),
 	}
 }
@@ -81,7 +83,16 @@ func (o *Orchestrator) RunTask(t Task) {
 }
 
 func (o *Orchestrator) Publish(eventName string, args ...interface{}) {
-	log.Printf("publish: \033[1m%s(%v)\033[0m", eventName, args)
+	key := fmt.Sprintf("%s(%v)", eventName, args)
+
+	if o.state.DidProcess(key, "main:state") {
+		return
+	}
+
+	o.state.Add(key, "main:state")
+
+	log.Printf("publish: \033[1m%s\033[0m", key)
+
 	o.dataBus.Publish(eventName, args...)
 }
 

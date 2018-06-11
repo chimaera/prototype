@@ -9,6 +9,6 @@ const (
 	NewNameServer = "new:nameserver"
 	NewPortTCP    = "new:port:tcp"
 	NewPortUDP    = "new:port:udp"
-	NewWebHost   = "new:webhost"
-	NewContent   = "new:content"
+	NewWebHost    = "new:webhost"
+	NewContent    = "new:content"
 )
