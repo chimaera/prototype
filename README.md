@@ -1,3 +1,3 @@
 <p align="center">
-  <img alt="chimaera" src="https://i.imgur.com/BttDXRm.png" />
+  <img alt="chimaera" src="logo.png" />
 </p>
