@@ -19,10 +19,16 @@ func main() {
 	olympus.Register(agents.NewWhoisChecker())
 	olympus.Register(agents.NewTCPPortscanner())
 	olympus.Register(agents.NewUDPPortscanner())
+	olympus.Register(agents.NewConfigChecker())
+	agents.RegisterPassiveDNSAgents(olympus)
 
 	olympus.Start()
 
-	olympus.Publish("new:hostname", "www.google.com")
+	olympus.Publish("new:hostname", "www.freelancer.com")
+
+	// TODO: Publish Such webhost event for each subdomain found
+	// TODO: Also, implement custom HOST header addition
+	olympus.Publish("new:webhost", "http://www.madridghosttour.com/")
 
 	olympus.Wait()
 }
