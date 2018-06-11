@@ -5,7 +5,7 @@ import (
 	"github.com/chimaera/prototype/core"
 )
 
-func RegisterPassiveAgents(o *core.Orchestrator) {
+func RegisterPassiveDNSAgents(o *core.Orchestrator) {
 	o.Register(crtsh.NewCrtsh())
 
 	return
