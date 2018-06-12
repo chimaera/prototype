@@ -4,6 +4,7 @@ import (
 	"net"
 
 	"github.com/chimaera/prototype/core"
+	"github.com/chimaera/prototype/db"
 )
 
 type IPChecker struct {
@@ -39,11 +40,15 @@ func (c *IPChecker) onEndpoint(hostname string) {
 
 	c.state.Add(hostname, c.ID())
 
+	parent := db.Current.SearchOrRoot(db.NodeTypeHostname, hostname)
+
 	// log.Printf("got new endpoint to scan for ip addresses: %s", hostname)
 
 	c.orchestrator.RunTask(func() {
 		if addrs, err := net.LookupHost(hostname); err == nil {
 			for _, addr := range addrs {
+				parent.Add(db.NodeTypeIP, addr)
+
 				c.orchestrator.Publish(core.NewIP, addr)
 			}
 		}

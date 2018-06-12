@@ -32,6 +32,10 @@ func (n *Node) Equals(v *Node) bool {
 	return reflect.DeepEqual(n.Value, v.Value)
 }
 
+func (n *Node) Add(t NodeType, v interface{}) {
+	n.Connect(NewNode(t, v))
+}
+
 func (n *Node) Connect(v *Node) {
 	if !n.IsConnected(v) {
 		n.Lock()
@@ -67,7 +71,7 @@ type PrinterFN func(format string, v ...interface{})
 
 func doPad(fn PrinterFN, pad int) {
 	for i := 0; i < pad; i++ {
-		fn(" ")
+		fn("  ")
 	}
 }
 

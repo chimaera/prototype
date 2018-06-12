@@ -6,6 +6,7 @@ import (
 	"net"
 
 	"github.com/chimaera/prototype/core"
+	"github.com/chimaera/prototype/db"
 
 	"github.com/bobesa/go-domain-util/domainutil"
 )
@@ -44,6 +45,8 @@ func (d *DNSEnum) onNewHostname(hostname string) {
 
 	d.state.Add(domainName, d.ID())
 
+	parent := db.Current.Search(db.NodeTypeHostname, hostname)
+
 	// TODO: load this from a file :P
 	wordlist := []string{
 		"www",
@@ -59,6 +62,8 @@ func (d *DNSEnum) onNewHostname(hostname string) {
 			d.orchestrator.RunTask(func() {
 				hostname := fmt.Sprintf("%s.%s", sub, domainName)
 				if _, err := net.LookupHost(hostname); err == nil {
+					parent.Add(db.NodeTypeHostname, hostname)
+
 					d.orchestrator.Publish(core.NewSubdomain, hostname)
 				}
 			})

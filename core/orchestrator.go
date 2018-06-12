@@ -104,7 +104,7 @@ func (o *Orchestrator) Publish(eventName string, args ...interface{}) {
 	log.Printf("publish: \033[1m%s\033[0m", key)
 
 	// print("\033[H\033[2J")
-	// o.dbase.Root().Print(o.doPrint, 0)
+	o.dbase.Root().Print(o.doPrint, 0)
 
 	o.dataBus.Publish(eventName, args...)
 }

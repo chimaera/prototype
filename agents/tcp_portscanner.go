@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/chimaera/prototype/core"
+	"github.com/chimaera/prototype/db"
 )
 
 var (
@@ -45,6 +46,8 @@ func (c *TCPPortscanner) onEndpoint(ip string) {
 
 	c.state.Add(ip, c.ID())
 
+	parent := db.Current.Search(db.NodeTypeIP, ip)
+
 	// log.Printf("got new IP to scan for ports: %s", ip)
 
 	c.orchestrator.RunTask(func() {
@@ -53,6 +56,7 @@ func (c *TCPPortscanner) onEndpoint(ip string) {
 			conn, _ := net.DialTimeout("tcp", host, 500*time.Millisecond)
 			if conn != nil {
 				conn.Close()
+				parent.Add(db.NodeTypePort, port)
 				c.orchestrator.Publish(core.NewPortTCP, port, ip)
 			}
 		}

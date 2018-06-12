@@ -30,12 +30,6 @@ func main() {
 
 	olympus.Start(inEvent, inType, inValue)
 
-	inEventTest := "new:hostname"
-	inTypeTest := db.NodeTypeHostname
-	inValueTest := "dasdasdas.herokuapp.com"
-
-	olympus.Start(inEventTest, inTypeTest, inValueTest)
-
 	// dbase.Root().Print(log.Printf, 0)
 
 	olympus.Wait()
