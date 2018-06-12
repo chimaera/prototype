@@ -13,6 +13,12 @@ func TestNode(t *testing.T) {
 	n1.Connect(n2)
 	n1.Connect(n3)
 
+	// will fail if already connected
+	err := n1.Connect(n3)
+	if err == nil {
+		t.Error("node connect should fail if already connected")
+	}
+
 	// testing table
 	var units = []struct {
 		got interface{} // what we go

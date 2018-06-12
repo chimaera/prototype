@@ -1,6 +1,7 @@
 package db
 
 import (
+	"errors"
 	"reflect"
 	"sync"
 )
@@ -36,11 +37,14 @@ func (n *Node) Add(t NodeType, v interface{}) {
 	n.Connect(NewNode(t, v))
 }
 
-func (n *Node) Connect(v *Node) {
+func (n *Node) Connect(v *Node) error {
 	if !n.IsConnected(v) {
 		n.Lock()
 		defer n.Unlock()
 		n.Relations = append(n.Relations, v)
+		return nil
+	} else {
+		return errors.New("node connect: node already connected")
 	}
 }
 
