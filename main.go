@@ -21,6 +21,7 @@ func main() {
 	olympus.Register(agents.NewTCPPortscanner())
 	olympus.Register(agents.NewUDPPortscanner())
 	olympus.Register(agents.NewConfigChecker())
+	olympus.Register(agents.NewTakeoverChecker())
 	agents.RegisterPassiveDNSAgents(olympus)
 
 	inEvent := "new:hostname"
@@ -28,6 +29,12 @@ func main() {
 	inValue := "www.freelancer.com"
 
 	olympus.Start(inEvent, inType, inValue)
+
+	inEventTest := "new:hostname"
+	inTypeTest := db.NodeTypeHostname
+	inValueTest := "dasdasdas.herokuapp.com"
+
+	olympus.Start(inEventTest, inTypeTest, inValueTest)
 
 	// dbase.Root().Print(log.Printf, 0)
 

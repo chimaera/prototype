@@ -11,4 +11,5 @@ const (
 	NewPortUDP    = "new:port:udp"
 	NewWebHost    = "new:webhost"
 	NewContent    = "new:content"
+	NewTakeover   = "new:takeover"
 )
