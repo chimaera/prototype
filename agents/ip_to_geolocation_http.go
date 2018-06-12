@@ -78,6 +78,6 @@ func (c *IP2Geo) onEndpoint(ip string) {
 			panic(err)
 		}
 
-		c.orchestrator.Publish(core.NewIPGeo, geo)
+		c.orchestrator.Publish(core.NewContent, geo)
 	})
 }
