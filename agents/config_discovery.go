@@ -23,7 +23,7 @@ func (d *Config) ID() string {
 }
 
 func (d *Config) Register(o *core.Orchestrator) error {
-	o.Subscribe(core.NewWebHost, d.onNewWebHost)
+	o.Subscribe(core.NewPortTCP, d.onNewWebHost)
 	d.orchestrator = o
 
 	return nil
@@ -31,18 +31,19 @@ func (d *Config) Register(o *core.Orchestrator) error {
 
 func TestGitRepo(url string) (urlRequest string, statusFound bool) {
 	RequestURL := fmt.Sprintf("%s%s", url, ".git/config")
-	resp, body, _ := core.Get(RequestURL, 120)
+	resp, body, _ := core.Get(RequestURL, 10)
 	if strings.Contains(body, "[core]") && resp.StatusCode != 404 {
 		return RequestURL, true
 	}
 	return RequestURL, false
 }
 
-func (d *Config) onNewWebHost(hostname string) {
-	d.state.Add(hostname, d.ID())
+func (d *Config) onNewWebHost(port int, hostname string) {
+	url := fmt.Sprintf("http://%s:%d/", hostname, port)
+	d.state.Add(url, d.ID())
 
 	d.orchestrator.RunTask(func() {
-		if url, status := TestGitRepo(hostname); status == true {
+		if url, status := TestGitRepo(url); status == true {
 			d.orchestrator.Publish(core.NewContent, url)
 		}
 	})
