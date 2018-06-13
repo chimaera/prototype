@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/chimaera/prototype/agents"
+	"github.com/chimaera/prototype/agents/scraper"
 	"github.com/chimaera/prototype/core"
 	"github.com/chimaera/prototype/db"
 )
@@ -25,6 +26,7 @@ func main() {
 	// olympus.Register(agents.NewUDPPortscanner())
 	olympus.Register(agents.NewConfigChecker())
 	olympus.Register(agents.NewTakeoverChecker())
+	olympus.Register(scraper.NewSimpleScraper())
 	agents.RegisterPassiveDNSAgents(olympus)
 
 	inEvent := "new:hostname"
