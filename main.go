@@ -1,7 +1,7 @@
 package main
 
 import (
-	//"log"
+	"net/http"
 
 	"github.com/chimaera/prototype/agents"
 	"github.com/chimaera/prototype/core"
@@ -15,11 +15,14 @@ var (
 func main() {
 	olympus = core.NewOrchestrator(32)
 
+	go http.ListenAndServe(":8181", core.NewHTTPProxy())
+	defer core.GetHTTPResponseCacheInstance().DestroyCacheStore()
+
 	olympus.Register(agents.NewDNSEnum())
 	olympus.Register(agents.NewIPChecker())
 	olympus.Register(agents.NewWhoisChecker())
 	olympus.Register(agents.NewTCPPortscanner())
-	olympus.Register(agents.NewUDPPortscanner())
+	// olympus.Register(agents.NewUDPPortscanner())
 	olympus.Register(agents.NewConfigChecker())
 	olympus.Register(agents.NewTakeoverChecker())
 	agents.RegisterPassiveDNSAgents(olympus)

@@ -15,6 +15,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/elazarl/goproxy"
+  packages = ["."]
+  revision = "91d82cc1070b9ec55e722ab471af64c82b2bcb9c"
+
+[[projects]]
+  branch = "master"
   name = "github.com/moul/http2curl"
   packages = ["."]
   revision = "9ac6cf4d929b2fa8fd2d2e6dec5bb0feb4f4911d"
@@ -64,6 +70,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f47bb0b39fd9310701a224b1608a671d68c9e93d5e588c9a474b232d348e2892"
+  inputs-digest = "7c499e2ec68790fef8069dcb907b9486a4d0c512f771bd6d3d8a7488f12f2b3a"
   solver-name = "gps-cdcl"
   solver-version = 1
